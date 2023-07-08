@@ -1,0 +1,32 @@
+name: Buildroot Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "Your Name"
+        git config --global user.email "your-email@example.com"
+
+    - name: Run Buildroot script
+      run: |
+        ./buildroot_script.sh
+
+    - name: Commit and push changes
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        git add ./output/*.img
+        git checkout -b images
+        git commit -m "Add generated image"
+        git push --set-upstream origin images
